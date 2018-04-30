@@ -32,7 +32,7 @@ public class Worker {
         // set the callback for message handling
         listenerContainer.setMessageListener(new MessageListener() {
             public void onMessage(Message message) {
-                final String bigOp = (String) messageConverter.fromMessage(message);
+                final BigOperation bigOp = (BigOperation) messageConverter.fromMessage(message);
 
                 // simply printing out the operation, but expensive computation could happen here
                 System.out.println("Received from RabbitMQ: " + bigOp);
