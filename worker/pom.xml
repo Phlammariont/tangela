@@ -42,7 +42,7 @@
                     <assembleDirectory>target</assembleDirectory>
                     <programs>
                         <program>
-                            <mainClass>com.heroku.devcenter.BigOperationWorker</mainClass>
+                            <mainClass>com.phlammariont.tangela.Worker</mainClass>
                             <name>worker</name>
                         </program>
                     </programs>
