@@ -6,6 +6,8 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,11 +31,14 @@ public class RabbitConfiguration {
         }
 
         final CachingConnectionFactory factory = new CachingConnectionFactory();
-        factory.setUsername(ampqUrl.getUserInfo().split(":")[0]);
-        factory.setPassword(ampqUrl.getUserInfo().split(":")[1]);
+        factory.setUsername(ampqUrl.getUserInfo() != null ? ampqUrl.getUserInfo().split(":")[0] : "guest");
+        factory.setPassword(ampqUrl.getUserInfo() != null ? ampqUrl.getUserInfo().split(":")[1] : "guest");
         factory.setHost(ampqUrl.getHost());
         factory.setPort(ampqUrl.getPort());
-        factory.setVirtualHost(ampqUrl.getPath().substring(1));
+        if (!ampqUrl.getPath().equals("")) {
+            factory.setVirtualHost(ampqUrl.getPath().substring(1));
+        }
+
 
         return factory;
     }
@@ -41,6 +46,11 @@ public class RabbitConfiguration {
     @Bean
     public AmqpAdmin amqpAdmin() {
         return new RabbitAdmin(connectionFactory());
+    }
+
+    @Bean
+    public MessageConverter jsonMessageConverter(){
+        return new JsonMessageConverter();
     }
 
     @Bean
