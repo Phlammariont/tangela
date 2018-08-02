@@ -42,7 +42,9 @@ public class Worker {
                     System.out.println(data.getName());
                     mainService.startPlanner(data);
                 } catch (Exception e) {
+
                     System.out.println(e);
+
                 }
             }
         });
