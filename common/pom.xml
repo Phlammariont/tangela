@@ -51,5 +51,10 @@
             <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>5.10.0</version>
+        </dependency>
     </dependencies>
 </project>

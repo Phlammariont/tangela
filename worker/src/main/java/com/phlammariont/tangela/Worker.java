@@ -38,8 +38,8 @@ public class Worker {
                 try {
                     System.out.println(new String(message.getBody()));
                     String JSON = new String(message.getBody());
-                    BigOperation data = new Gson().fromJson(JSON, BigOperation.class);
-                    System.out.println(data.getName());
+                    PlannerMessage data = new Gson().fromJson(JSON, PlannerMessage.class);
+                    System.out.println(data.toString());
                     mainService.startPlanner(data);
                 } catch (Exception e) {
 
@@ -68,5 +68,8 @@ public class Worker {
         // start up the listener. this will block until JVM is killed.
         listenerContainer.start();
         System.out.println("BigOperationWorker started");
+
+        // insert new login on DB
+        mainService.logLogin("hola");
     }
 }

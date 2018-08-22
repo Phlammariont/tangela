@@ -26,8 +26,8 @@ public class BigOperationWebController {
     @Autowired private Queue rabbitQueue;
 
     @ModelAttribute("bigOp")
-    public BigOperation newBigOp() {
-        return new BigOperation();
+    public PlannerMessage newBigOp() {
+        return new PlannerMessage();
     }
 
     @RequestMapping()
@@ -36,7 +36,7 @@ public class BigOperationWebController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String process(@ModelAttribute("bigOp") BigOperation bigOp, Map<String,Object> map) {
+    public String process(@ModelAttribute("bigOp") PlannerMessage bigOp, Map<String,Object> map) {
         // Receives the bigOp from the form submission, converts to a message, and sends to RabbitMQ.
         ApplicationContext context = new AnnotationConfigApplicationContext(RabbitConfiguration.class);
         AmqpTemplate amqpTemplate = context.getBean(AmqpTemplate.class);
