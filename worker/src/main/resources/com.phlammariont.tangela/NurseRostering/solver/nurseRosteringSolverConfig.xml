@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <scanAnnotatedClasses>
+    <packageInclude>com.phlammariont.tangela</packageInclude>
+  </scanAnnotatedClasses>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>com.phlammariont.tangela.score.NurseRosteringEasyScoreCalculator</easyScoreCalculatorClass>
+    <!--<scoreDrl>org/optaplanner/examples/cloudbalancing/solver/cloudBalancingScoreRules.drl</scoreDrl>-->
+  </scoreDirectorFactory>
+
+  <!-- Optimization algorithms configuration -->
+  <termination>
+    <minutesSpentLimit>2</minutesSpentLimit>
+  </termination>
+</solver>

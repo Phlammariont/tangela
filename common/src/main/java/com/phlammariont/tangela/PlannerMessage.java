@@ -20,6 +20,39 @@ public class PlannerMessage implements Serializable {
     private MessageTimeLapse timeLapse;
     private List<MessageShift> shifts;
 
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<MessageNurse> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<MessageNurse> users) {
+        this.users = users;
+    }
+
+    public MessageTimeLapse getTimeLapse() {
+        return timeLapse;
+    }
+
+    public void setTimeLapse(MessageTimeLapse timeLapse) {
+        this.timeLapse = timeLapse;
+    }
+
+    public List<MessageShift> getShifts() {
+        return shifts;
+    }
+
+    public void setShifts(List<MessageShift> shifts) {
+        this.shifts = shifts;
+    }
+
     public PlannerMessage() {
     }
 

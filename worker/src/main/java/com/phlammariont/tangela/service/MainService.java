@@ -8,6 +8,10 @@ public class MainService {
     public void startPlanner(PlannerMessage data) {
         System.out.println("starting planner for: ");
         System.out.println(data.getName());
+
+        NurseRosterService nurseRoster = new NurseRosterService();
+
+        nurseRoster.resolve(data);
     }
 
     public void logLogin(String message) {
