@@ -43,6 +43,7 @@ public class Worker {
                     mainService.startPlanner(data);
                 } catch (Exception e) {
 
+                    e.printStackTrace();
                     System.out.println(e);
 
                 }
@@ -68,8 +69,5 @@ public class Worker {
         // start up the listener. this will block until JVM is killed.
         listenerContainer.start();
         System.out.println("BigOperationWorker started");
-
-        // insert new login on DB
-        mainService.logLogin("hola");
     }
 }

@@ -12,12 +12,11 @@ import com.google.firebase.cloud.FirestoreClient;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class DaoService {
-
+    private Firestore db;
 
     public void init() throws IOException {
         System.out.println("connecting the DB");
@@ -29,14 +28,20 @@ public class DaoService {
                 .build();
         FirebaseApp.initializeApp(options);
 
-        Firestore db = FirestoreClient.getFirestore();
+        db = FirestoreClient.getFirestore();
+    }
 
-        DocumentReference docRef = db.collection("users").document("alovelace");
-        // Add document data  with id "alovelace" using a hashmap
-        Map<String, Object> data = new HashMap<>();
-        data.put("first", "Ada");
-        data.put("last", "Lovelace");
-        data.put("born", 1815);
+    public void saveNewBestSolution(Map<String, Object> data) {
+        data.put("BestSolution", false);
+        this.saveSolution(data);
+    }
+    public void saveBestSolution(Map<String, Object> data) {
+        data.put("BestSolution", true);
+        this.saveBestSolution(data);
+    }
+
+    public void saveSolution(Map<String, Object> data) {
+        DocumentReference docRef = db.collection("planner").document((String) data.get("id"));
         //asynchronously write data
         ApiFuture<WriteResult> result = docRef.set(data);
         // ...

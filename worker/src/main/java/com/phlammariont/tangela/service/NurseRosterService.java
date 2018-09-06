@@ -6,9 +6,21 @@ import com.phlammariont.tangela.model.Nurse;
 import com.phlammariont.tangela.model.Shift;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.api.solver.event.BestSolutionChangedEvent;
+import org.optaplanner.core.api.solver.event.SolverEventListener;
+
+import java.io.IOException;
 
 public class NurseRosterService {
-    public void resolve(PlannerMessage data) {
+    FirebaseService firebaseService;
+
+
+    public NurseRosterService() throws IOException {
+        firebaseService = new FirebaseService();
+    }
+
+    public void resolve(PlannerMessage data) throws IOException {
+
 
         System.out.println("setting the planner");
         // Build the Solver
@@ -21,6 +33,17 @@ public class NurseRosterService {
 
         System.out.println("problem for the planner: ");
         System.out.println(toDisplayString(unsolvedNurseRoster));
+
+        solver.addEventListener(new SolverEventListener<NurseRoster>() {
+            public void bestSolutionChanged(BestSolutionChangedEvent<NurseRoster> event) {
+                // Ignore infeasible (including uninitialized) solutions
+                if (event.getNewBestSolution().getScore().isFeasible()) {
+                    System.out.println("Best Solution Found: \n" +
+                        toDisplayString( event.getNewBestSolution() ) );
+                    firebaseService.saveNewBestSolution( event.getNewBestSolution() );
+                }
+            }
+        });
 
         // Solve the problem
         System.out.println("solving");
