@@ -12,12 +12,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.util.ErrorHandler;
 
+import java.io.IOException;
+
 /**
  * Worker for receiving and processing operations asynchronously.
  */
 
 public class Worker {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final MainService mainService = new MainService();
 
         final ApplicationContext rabbitConfig = new AnnotationConfigApplicationContext(RabbitConfiguration.class);

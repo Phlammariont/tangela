@@ -37,7 +37,7 @@ public class DaoService {
     }
     public void saveBestSolution(Map<String, Object> data) {
         data.put("BestSolution", true);
-        this.saveBestSolution(data);
+        this.saveSolution(data);
     }
 
     public void saveSolution(Map<String, Object> data) {

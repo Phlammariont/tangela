@@ -53,6 +53,8 @@ public class NurseRosterService {
         System.out.println("solving finish " +
             "\nSolved roster with nurses and shifts:\n"
             + toDisplayString(solvedNurseRoster));
+
+        firebaseService.saveBestSolution( solvedNurseRoster );
     }
 
     public static String toDisplayString(NurseRoster nurseRoster) {

@@ -42,6 +42,16 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
             long shiftsToday =  moreThanOneShiftToday(nurse);
             if ( shiftsToday >= 1 ) hardScore += -1 * shiftsToday * SHIFT_REGULAR_HOURS;
 
+            //no se puede mas de dos diarios seguidos
+
+            //Posturno no es descanzo
+
+            //siempre que hago noche no trabajo el dia siguiente
+
+            // no se puede mas de 10 días sin descanzo
+
+            // totalizar por el roster final por enfermera a final de mes por hora y ajustar con el saldo anterior
+
 
             // Soft constraints
             if (used) {
