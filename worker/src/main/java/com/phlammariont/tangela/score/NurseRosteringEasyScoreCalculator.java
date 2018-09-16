@@ -6,9 +6,9 @@ import com.phlammariont.tangela.model.Shift;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<NurseRoster> {
     private static final int SHIFT_REGULAR_HOURS = 12;
@@ -34,19 +34,18 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
                     hoursLabor += shift.getRequiredHours();
                     used = true;
                     nurse.myShifts.add(shift);
-                    // System.out.println("nurse Id: " + nurse.getId() + " shift date: " + shift.getDate());
                 }
             }
             // Hard constraints
             // nurses just can take a shift a day
-            long shiftsToday =  moreThanOneShiftToday(nurse);
-            if ( shiftsToday >= 1 ) hardScore += -1 * shiftsToday * SHIFT_REGULAR_HOURS;
+            hardScore -= moreThanOneShiftTodayScore(nurse);
 
             //no se puede mas de dos diarios seguidos
+            hardScore -= moreThanTwoDaylyShiftsInARowScore(nurse);
 
             //Posturno no es descanzo
-
             //siempre que hago noche no trabajo el dia siguiente
+            hardScore -= afterNightShiftScore(nurse);
 
             // no se puede mas de 10 días sin descanzo
 
@@ -61,13 +60,71 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
         return HardSoftScore.valueOf(hardScore, softScore);
     }
 
+    private long afterNightShiftScore(Nurse nurse) {
+        Map<LocalDate, Shift> shiftByDate = getShiftsByDate(nurse);
+        long fault = 0;
+        for (Shift shift: nurse.getMyShifts()) {
+            if ( hasAfterNightShift(shift, shiftByDate) ) {
+                fault += SHIFT_REGULAR_HOURS;
+            }
+        }
+        return fault;
+    }
+
+    private boolean hasAfterNightShift(Shift shift, Map<LocalDate, Shift> shiftByDate) {
+        return isNightShift(shift)  && !getDaysInAdvanceShiftCode(shiftByDate, shift, 1L).equals("");
+    }
+
+    private boolean isNightShift(Shift shift) {
+        return shift.getShiftType().getCodeLetter().equals("N");
+    }
+
+    private boolean isDailyShift(Shift shift) {
+        return shift.getShiftType().getCodeLetter().equals("D");
+    }
+
+    private long moreThanTwoDaylyShiftsInARowScore(Nurse nurse) {
+        Map<LocalDate, Shift> shiftByDate = getShiftsByDate(nurse);
+        long fault = 0;
+        for (Shift shift: nurse.getMyShifts()) {
+            if (
+                    isDailyShift(shift) &&
+                        getDaysInAdvanceShiftCode(shiftByDate, shift, 1L).equals("D") &&
+                        getDaysInAdvanceShiftCode(shiftByDate, shift, 2L).equals("D")
+            ) {
+                fault += SHIFT_REGULAR_HOURS;
+            }
+        }
+        return fault;
+    }
+
+    private Map<LocalDate, Shift> getShiftsByDate(Nurse nurse) {
+        return nurse.getMyShifts()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Shift::getDate,
+                                shift -> shift,
+                                (s, a) -> isDailyShift(s) ? s : a
+                        )
+                );
+    }
+
+    private String getDaysInAdvanceShiftCode(Map<LocalDate, Shift> shiftByDate, Shift shift, long daysInAdvance) {
+        LocalDate today = shift.getDate();
+        Shift twoDaysInAdvanceShift = shiftByDate.get(today.plusDays(daysInAdvance));
+        return twoDaysInAdvanceShift != null ? twoDaysInAdvanceShift.getShiftType().getCodeLetter() : "";
+    }
+
     // TODO @Leon esto se debe mejorar para que busque por fecha por tipo de shift y por repeticiones aisladas
     // [2,2,3,3,3] -> 3
-    private long moreThanOneShiftToday(Nurse nurse) {
+    private long moreThanOneShiftTodayScore(Nurse nurse) {
         Set<String> uniques = new HashSet<String>();
-        return nurse.myShifts
+        long shiftsToday = nurse.myShifts
                 .stream()
                 .filter( p -> !uniques.add( p.getDate().toString() ) )
                 .count();
+        if ( shiftsToday >= 1 ) return shiftsToday * SHIFT_REGULAR_HOURS;
+        return 0;
     }
 }

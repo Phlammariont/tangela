@@ -2,10 +2,7 @@ package com.phlammariont.tangela.service;
 
 import com.phlammariont.tangela.PlannerMessage;
 import com.phlammariont.tangela.domain.NurseRoster;
-import com.phlammariont.tangela.model.MessageNurse;
-import com.phlammariont.tangela.model.MessageShift;
-import com.phlammariont.tangela.model.Nurse;
-import com.phlammariont.tangela.model.Shift;
+import com.phlammariont.tangela.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,11 +27,16 @@ public class NurseRosterMessage {
 
         List<Shift> shifts = new ArrayList<Shift>();
         Shift shift;
+        ShiftType shiftType;
         // create the shifts on roster:
         for (MessageShift messageShift : data.getShifts()) {
             shift = new Shift();
             shift.setId(messageShift.getId());
             shift.setDate(LocalDate.parse(messageShift.getDate()));
+
+            shiftType = new ShiftType();
+            shiftType.setCodeLetter(messageShift.getShiftType().getCode());
+            shift.setShiftType(shiftType);
 
             shifts.add(shift);
         }

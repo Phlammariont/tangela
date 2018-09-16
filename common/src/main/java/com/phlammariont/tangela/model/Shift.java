@@ -44,7 +44,9 @@ public class Shift {
         return "shift: " +
             this.id +
             " - " +
-            this.date;
+            this.date +
+            " - " +
+            this.shiftType.getCodeLetter();
     }
 
     public int getRequiredHours() {
