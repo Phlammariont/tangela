@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 
 public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<NurseRoster> {
     private static final int SHIFT_REGULAR_HOURS = 12;
+    private static final int MAX_WORK_LOAD = 10;
+    private static final int MIN_REST_LAPSE = 1;
+    private static final String NIGHT_CODE = "N";
+    private static final String DAY_CODE = "D";
 
     /**
      * A very simple implementation. The double loop can easily be removed by using Maps as shown in
@@ -48,6 +52,7 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
             hardScore -= afterNightShiftScore(nurse);
 
             // no se puede mas de 10 días sin descanzo
+            hardScore -= maxWorkloadByDaysScore(nurse);
 
             // totalizar por el roster final por enfermera a final de mes por hora y ajustar con el saldo anterior
 
@@ -58,6 +63,32 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
             }
         }
         return HardSoftScore.valueOf(hardScore, softScore);
+    }
+
+    private long maxWorkloadByDaysScore(Nurse nurse) {
+        Map<LocalDate, Shift> shiftByDate = getShiftsByDate(nurse);
+        long fault = 0;
+        List<String> lapse;
+        for (Shift shift: nurse.getMyShifts()) {
+            lapse = new ArrayList<>();
+            for (long i = 0; i <= MAX_WORK_LOAD; i++) {
+                lapse.add(getDaysInAdvanceShiftCode(shiftByDate, shift, i));
+            }
+            if (
+                sumByCode(lapse) > MAX_WORK_LOAD - MIN_REST_LAPSE
+            ) {
+                fault += (sumByCode(lapse) - (MAX_WORK_LOAD - MIN_REST_LAPSE) ) * SHIFT_REGULAR_HOURS;
+            }
+        }
+        return fault;
+    }
+
+    private int sumByCode(List<String> lapse) {
+        int counter = 0;
+        for (String code : lapse) {
+            counter += DAY_CODE.equals(code) ? 1 : NIGHT_CODE.equals(code) ? 2 : 0;
+        }
+        return counter;
     }
 
     private long afterNightShiftScore(Nurse nurse) {
@@ -76,11 +107,11 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
     }
 
     private boolean isNightShift(Shift shift) {
-        return shift.getShiftType().getCodeLetter().equals("N");
+        return shift.getShiftType().getCodeLetter().equals(NIGHT_CODE);
     }
 
     private boolean isDailyShift(Shift shift) {
-        return shift.getShiftType().getCodeLetter().equals("D");
+        return shift.getShiftType().getCodeLetter().equals(DAY_CODE);
     }
 
     private long moreThanTwoDaylyShiftsInARowScore(Nurse nurse) {
@@ -89,8 +120,8 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
         for (Shift shift: nurse.getMyShifts()) {
             if (
                     isDailyShift(shift) &&
-                        getDaysInAdvanceShiftCode(shiftByDate, shift, 1L).equals("D") &&
-                        getDaysInAdvanceShiftCode(shiftByDate, shift, 2L).equals("D")
+                        getDaysInAdvanceShiftCode(shiftByDate, shift, 1L).equals(DAY_CODE) &&
+                        getDaysInAdvanceShiftCode(shiftByDate, shift, 2L).equals(DAY_CODE)
             ) {
                 fault += SHIFT_REGULAR_HOURS;
             }
