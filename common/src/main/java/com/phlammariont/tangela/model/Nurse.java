@@ -7,6 +7,8 @@ public class Nurse {
 
     public List<Shift> myShifts = new ArrayList<>();
     private String id;
+    private String role;
+    private String domain;
     private int shiftCost;
 
 
@@ -27,7 +29,7 @@ public class Nurse {
     }
 
     public String getLabel() {
-        return "nurse: " + this.id;
+        return "nurse: " + this.id + ", role: " + this.getRole();
     }
 
     public int getShiftCost() {
@@ -36,5 +38,21 @@ public class Nurse {
 
     public void setShiftCost(int shiftCost) {
         this.shiftCost = shiftCost;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 }

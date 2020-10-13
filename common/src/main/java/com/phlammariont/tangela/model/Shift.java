@@ -13,6 +13,8 @@ public class Shift {
     private LocalDate date;
     private ShiftType shiftType;
     private int requiredHours = SHIFT_REGULAR_HOURS;
+    private Building building;
+    private Floor floor;
 
 
     public LocalDate getDate() {
@@ -63,5 +65,21 @@ public class Shift {
 
     public void setShiftType(ShiftType shiftType) {
         this.shiftType = shiftType;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
+
+    public Building getBuilding() {
+        return building;
+    }
+
+    public Floor getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Floor floor) {
+        this.floor = floor;
     }
 }

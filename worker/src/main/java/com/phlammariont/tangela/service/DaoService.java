@@ -21,7 +21,7 @@ public class DaoService {
     public void init() throws IOException {
         System.out.println("connecting the DB");
         // Use a service account
-        InputStream serviceAccount = new FileInputStream("/Users/lruedag/development/ncprojects/tangela/nurse-chansey-firebase-adminsdk-mz8iz-8fb4227f08.json");
+        InputStream serviceAccount = new FileInputStream("/Users/p.rueda-gomez/development/other/tangela/worker/workia-scheduler-firebase-adminsdk-ncxxf-f144c7d583.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(credentials)

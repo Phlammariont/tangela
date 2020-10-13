@@ -28,14 +28,25 @@ public class FirebaseService {
         Map<String, Object> shifts = new HashMap<>();
         Map<String, Object> shiftMap;
         for (Shift shift: nurseRoster.getShiftList()) {
-            shiftMap = new HashMap<>();
-            shiftMap.put("id", shift.getId());
-            shiftMap.put("nurseId", shift.getNurse().getId());
-            shifts.put(shift.getId(), shiftMap);
+            if(shift.getNurse() != null) {
+                shiftMap = new HashMap<>();
+                shiftMap.put("id", shift.getId());
+                shiftMap.put("userId", shift.getNurse().getId());
+                shiftMap.put("date", shift.getDate().toString());
+                shiftMap.put("type", shift.getShiftType().getCodeLetter());
+                shiftMap.put("userRole", shift.getNurse().getRole());
+                shiftMap.put("userDomain", shift.getNurse().getDomain());
+                shiftMap.put("florName", shift.getFloor().getName());
+                shiftMap.put("buildingName", shift.getBuilding().getName());
+                shiftMap.put("buildingId", shift.getBuilding().getId());
+                shiftMap.put("floorId", shift.getFloor().getId());
+                shifts.put(shift.getId(), shiftMap);
+            }
         }
 
         Map<String, Object> data = new HashMap<>();
         data.put("id", nurseRoster.getId());
+        data.put("performance", "" + nurseRoster.getPerfMillis());
         data.put("shifts", shifts);
 
         return data;

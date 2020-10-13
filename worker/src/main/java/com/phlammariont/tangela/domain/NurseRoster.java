@@ -17,6 +17,7 @@ public class NurseRoster {
     private String id;
     private List<Nurse> nurseList;
     private HardSoftScore score;
+    private long perfMillis;
 
 
     @PlanningEntityCollectionProperty
@@ -53,5 +54,13 @@ public class NurseRoster {
 
     public void setScore(HardSoftScore score) {
         this.score = score;
+    }
+
+    public void setPerfMillis(long perfMillis) {
+        this.perfMillis = perfMillis;
+    }
+
+    public long getPerfMillis() {
+        return perfMillis;
     }
 }

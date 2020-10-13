@@ -4,7 +4,9 @@ public class MessageShift {
     private String id;
     private String date;
     private Service service;
+    private Building building;
     private MessageShiftType shiftType;
+    private Floor floor;
 
     public String getId() {
         return id;
@@ -36,5 +38,21 @@ public class MessageShift {
 
     public void setShiftType(MessageShiftType shiftType) {
         this.shiftType = shiftType;
+    }
+
+    public Building getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
+
+    public Floor getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Floor floor) {
+        this.floor = floor;
     }
 }
