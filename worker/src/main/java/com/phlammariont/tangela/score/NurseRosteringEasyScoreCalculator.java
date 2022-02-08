@@ -35,51 +35,68 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
         int hardScore = 0;
         int softScore = 0;
 
+        int usedNurses = 0;
+
         Set<Integer> usedBuildingsCosts = new HashSet<>();
         Set<Integer> usedFloorCosts = new HashSet<>();
+        Set<String> domains = new HashSet<>();
         // Rules:
         for (Nurse nurse : nurseRoster.getNurseList()) {
             boolean used = false;
+            long shiftsToday = 0;
             nurse.myShifts = new ArrayList<>();
 
             // Calculate usage
             for (Shift shift : nurseRoster.getShiftList()) {
+                if (shift.getNurse() == null) continue;
                 if (nurse.equals(shift.getNurse())) {
+                    usedNurses ++;
                     used = true;
+                    shiftsToday++;
                     nurse.myShifts.add(shift);
+                    domains.add(nurse.getDomain());
+                    usedBuildingsCosts.add(shift.getBuilding().getCost());
+                    usedFloorCosts.add(shift.getFloor().getCost());
+
+                    if (incompatibleShift(shift, nurse.getRole())) {
+                        hardScore -= SHIFT_REGULAR_HOURS * 5;
+                    }
                 }
-                usedBuildingsCosts.add(shift.getBuilding().getCost());
-                usedFloorCosts.add(shift.getFloor().getCost());
             }
             // Hard constraints
             // nurses just can take a shift a day
-            hardScore -= moreThanOneShiftTodayScore(nurse);
+            hardScore -= shiftsToday > 1 ? shiftsToday * SHIFT_REGULAR_HOURS : 0;
 
             //no se puede trabajar en un puesto de menor rank
-            hardScore -= correctRankBalance(nurse);
+            //hardScore -= correctRankBalance(nurse);
 
             //Posturno no es descanzo
             //siempre que hago noche no trabajo el dia siguiente
             //hardScore -= afterNightShiftScore(nurse);
 
             // no se puede mas de 7 días sin descanzo
-            hardScore -= maxWorkloadByDaysScore(nurse);
+            // hardScore -= maxWorkloadByDaysScore(nurse);
 
             // totalizar por el roster final por enfermera a final de mes por hora y ajustar con el saldo anterior
 
 
             // Soft constraints
-            if (used) {
-                softScore -= nurse.getShiftCost();
-            }
+//            if (used) {
+//                softScore -= nurse.getShiftCost();
+//            }
         }
 
-        softScore -= calculateBuildingCost(usedBuildingsCosts);
-
-        softScore -= calculateFloorCost(usedFloorCosts);
+        // las areas deben estar juntas
+//        softScore -= uniqueConcurrentDomains(domains);
+//
+//        softScore -= calculateBuildingCost(usedBuildingsCosts);
+//
+//        softScore -= calculateFloorCost(usedFloorCosts);
 
         Timestamp stopTimestamp = new Timestamp(System.currentTimeMillis());
-        nurseRoster.setPerfMillis(stopTimestamp.getTime() - startTimestamp.getTime());
+        long timespent = stopTimestamp.getTime() - startTimestamp.getTime();
+        nurseRoster.setPerfMillis(timespent);
+        //System.out.println("time: " + timespent + " hard: " + hardScore + " soft: " + softScore + " usage: " + usedNurses + "/" + nurseRoster.getNurseList().size() + "/" + nurseRoster.getShiftList().size());
         return HardSoftScore.valueOf(hardScore, softScore);
     }
 
@@ -101,6 +118,13 @@ public class NurseRosteringEasyScoreCalculator implements EasyScoreCalculator<Nu
                 .count();
         if ( shiftsToday >= 1 ) return shiftsToday * SHIFT_REGULAR_HOURS;
         return 0;
+    }
+
+    public long uniqueConcurrentDomains(Set<String> domains) {
+        long uniques = domains
+                .stream()
+                .count();
+        return uniques * SHIFT_REGULAR_HOURS * 10;
     }
 
     private long correctRankBalance(Nurse nurse) {

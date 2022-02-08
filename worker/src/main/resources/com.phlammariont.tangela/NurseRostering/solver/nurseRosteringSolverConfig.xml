@@ -12,6 +12,6 @@
 
   <!-- Optimization algorithms configuration -->
   <termination>
-    <minutesSpentLimit>3</minutesSpentLimit>
+    <minutesSpentLimit>70</minutesSpentLimit>
   </termination>
 </solver>

@@ -5,6 +5,8 @@ import com.phlammariont.tangela.model.Shift;
 import com.phlammariont.tangela.model.ShiftType;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,6 +65,17 @@ class NurseRosteringEasyScoreCalculatorTest {
         nurse.myShifts.add(shift4);
 
         long fail = calculator.maxWorkloadByDaysScore(nurse);
+        System.out.println("desde la prueba " + fail);
+    }
+
+    @org.junit.jupiter.api.Test
+    void maxDomainsByDaysScorePositive() {
+        Set<String> domains = new HashSet<>();
+
+        domains.add("Area 1");
+        domains.add("Area 2");
+        domains.add("Area 3");
+        long fail = calculator.uniqueConcurrentDomains(domains);
         System.out.println("desde la prueba " + fail);
     }
 }

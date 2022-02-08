@@ -28,7 +28,7 @@ public class NurseRosterMessage {
             nurse.setId(user.getId());
             nurse.setRole(user.getRole().getCode());
             nurse.setDomain(user.getServices().get(0).getId());
-            nurse.setShiftCost(roleToRank(user.getRole().getCode()) * 10);
+            nurse.setShiftCost(roleToRank(user.getRole().getCode()) * 5);
 
             nurses.add(nurse);
         }

@@ -29,7 +29,7 @@ public class Nurse {
     }
 
     public String getLabel() {
-        return "nurse: " + this.id + ", role: " + this.getRole();
+        return "nurse: " + this.id + " role: " + this.getRole() + " area: " + this.getDomain();
     }
 
     public int getShiftCost() {
